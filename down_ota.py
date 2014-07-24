@@ -12,6 +12,12 @@ class TitleName(SGMLParser):
         self.is_h1 = ""
         self.name = []
 
+    def start_a(self, attrs):
+        self.urls = []
+        href = [v for k, v in attrs if k=='href']
+        if href:
+            self.urls.extend(href)
+
     def start_h1(self, attrs):
         self.is_h1 = 1
 
@@ -31,3 +37,7 @@ for uid in range(50630, 50645):
     for item in titlename.name:
         print item,
         print url_from_uid
+
+    for it in titlename.urls:
+        print 'from >> ',
+        print it
