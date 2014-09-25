@@ -1,9 +1,10 @@
 #! /usr/bin/python
 #coding=utf-8
 
-import requests
 import re
 import random
+
+import requests
 
 def downloadspic(pic_id_list):
     for pic_id in pic_id_list:       
@@ -15,6 +16,13 @@ def downloadspic(pic_id_list):
 
             if r.status_code == 200:
                 print 'Find the picture ...'
+                #print 'downloadspic=', pic_id
+                #with open('/home/tao/testp/'+str(pic_id), 'wb') as f:
+                #    for chunk in r.iter_content(chunk_size=1024):
+                #        if chunk:
+                #            f.write(chunk)
+                #            f.flush()
+                #    f.close()
             else:
                 print 'The pictrue is not exsit'
 
