@@ -1,10 +1,25 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
+import os
+import sys
+from datetime import datetime
+
+from urllib import urlretrieve
 import urllib2
 from sgmllib import SGMLParser
 
+import pymongo
+# import gsidfs
 
-#列出文章标题，方便查找
+
+conn = pymongo.Connection('localhost', 27017)
+db = conn['spider']
+pic = db.pic
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+
 
 class TitleName(SGMLParser):
     def __init__(self):
@@ -13,10 +28,15 @@ class TitleName(SGMLParser):
         self.name = []
 
     def start_a(self, attrs):
+        global fname, durl
         self.urls = []
-        href = [v for k, v in attrs if k=='href']
+        href = [v for k, v in attrs if k=='href' and v.split('.')[-1]=='jpg']
+
         if href:
             self.urls.extend(href)
+            urlretrieve(href[0], '/home/tao/spider/%s'% href[0].split('/')[-1])
+            durl = href[0]
+            fname = href[0].split('/')[-1]
 
     def start_h1(self, attrs):
         self.is_h1 = 1
@@ -24,20 +44,28 @@ class TitleName(SGMLParser):
     def end_h1(self):
         self.is_h1 = ""
 
+    def start_img(self, attrs):
+        self.imgs = []
+        src = [ v for k,v in attrs if k=="src" and v.startswith("http") ]
+        if src:
+            self.imgs.extend(src)
+
     def handle_data(self, text):
         if self.is_h1 == 1:
             self.name.append(text)
 
-for uid in range(50630, 50645):
-    url_from_uid = 'http://otachan.net/post/show/%d/'% uid
-    content = urllib2.urlopen(url_from_uid).read()
-    titlename = TitleName()
-    titlename.feed(content)
+for sid in range(134000, 135493):
+    url_from_sid = 'http://tsundora.com/%d/'% sid
 
-    for item in titlename.name:
-        print item,
-        print url_from_uid
+    try:
+        content = urllib2.urlopen(url_from_sid, timeout=3).read()
+        titlename = TitleName()
+        titlename.feed(content)
 
-    for it in titlename.urls:
-        print 'from >> ',
-        print it
+        for item in titlename.name:
+            print item,
+            print url_from_sid
+            pic.insert({"title" : item, "url" : url_from_sid, "name" : fname, "durl" : durl,"atime" : datetime.now()})
+
+    except Exception as e:
+        print e
