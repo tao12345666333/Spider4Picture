@@ -7,10 +7,8 @@ from datetime import datetime
 from urllib import urlretrieve
 import urllib2
 from sgmllib import SGMLParser
-
 import pymongo
 # import gsidfs
-
 
 conn = pymongo.Connection('localhost', 27017)
 db = conn['spider']
@@ -18,7 +16,6 @@ pic = db.pic
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
 
 
 class TitleName(SGMLParser):
