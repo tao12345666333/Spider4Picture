@@ -3,12 +3,12 @@
 import os
 import sys
 
-import StringIO
 #import Image
 from PIL import Image
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
 
 def ensure_dir(path):
     try:
@@ -16,8 +16,9 @@ def ensure_dir(path):
     except OSError:
         pass
 
+
 def crop_image(tfilename):
-    MAXSIZEX = 1242 
+    MAXSIZEX = 1242
     MAXSIZEY = 2208
     ratio = 1. * MAXSIZEX / MAXSIZEY
 
@@ -37,7 +38,7 @@ def crop_image(tfilename):
         im = im.crop((left, top, right, bottom))
 
     im = im.resize((MAXSIZEX, MAXSIZEY), Image.ANTIALIAS)
-    im.save(tfilename, "jpeg", quality = 80)
+    im.save(tfilename, "jpeg", quality=80)
 
 files = os.listdir(".")
 
@@ -47,4 +48,3 @@ for filename in files:
     if not portion[1]:
         crop_image(filename)
         os.rename(filename, newname)
-
