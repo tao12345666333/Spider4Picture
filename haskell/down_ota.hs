@@ -8,6 +8,7 @@ import Control.Monad.Maybe
 import Network.HTTP
 import Network.URI
 import System.Environment
+import Control.Concurrent.ParallelIO
 
 -- helper function for getting page content
 openUrl :: String -> MaybeT IO String
@@ -36,7 +37,7 @@ download url = do
     case content of
         Nothing -> putStrLn $ "bad url: " ++ url
         Just _content -> do
-            let name = tail    uriPath  . fromJust . parseURI $ url
+            let name = tail . uriPath . fromJust . parseURI $ url
             B.writeFile name (B.pack _content)
 
 main = do
